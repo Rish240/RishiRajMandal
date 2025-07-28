@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BCC CLASSES</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oooh+Baby&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    nav {
+      background: #333;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav h1 {
+      font-size: 18px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    section {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
+    section.active {
+      display: block;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .success {
+      display: none;
+      color: green;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .tab-btns {
+      display: flex;
+      justify-content: space-evenly;
+      margin-bottom: 10px;
+    }
+    .tab-btns button {
+      padding: 8px 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background: #222;
+      color: white;
+      font-family: 'Oooh Baby', cursive;
+      font-size: 24px;
+    }
+    #home.bg {
+      background-image: url('https://i.ibb.co/jMcvVv8/bcc-home.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      min-height: 400px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+</head>
+<body>
+  <nav>
+    <h1 id="studentInfo"></h1>
+    <ul>
+      <li><a onclick="showSection('home')">Home</a></li>
+      <li><a onclick="showSection('about')">About Us</a></li>
+      <li><a onclick="showSection('contact')">Contact Us</a></li>
+      <li><a onclick="showSection('register')">Login/Register</a></li>
+      <li><a onclick="logoutUser()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <section id="home" class="active">
+    <h2>Welcome to <span style="color: orange;">BCC</span> <span style="color: blue;">CLASSES</span></h2>
+    <p>This is the home page.</p>
+  </section>
+
+  <section id="about">
+    <h2 style="color: orange;">BCC CLASSES</h2>
+    <p style="color: blue; font-weight: bold;">Barharwa Kushwaha Tola,<br>District Sahebganj, Jharkhand - 816101</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>📞 7717797925</p>
+    <p>👨‍🏫 Rohit Sir</p>
+  </section>
+
+  <section id="register">
+    <div class="container">
+      <div class="tab-btns">
+        <button onclick="toggleTab('registerForm')">Register</button>
+        <button onclick="toggleTab('loginForm')">Login</button>
+      </div>
+
+      <div id="registerForm">
+        <h2>Register at BCC CLASSES</h2>
+        <input type="text" id="regName" placeholder="Enter Full Name" required />
+        <input type="email" id="regEmail" placeholder="Enter Email" required />
+        <input type="password" id="regPassword" placeholder="Create Password" required />
+        <select id="regClass">
+          <option value="">Select Class</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+        </select>
+        <button onclick="sendOTP()">Send OTP</button>
+        <input type="text" id="otp" placeholder="Enter OTP" disabled />
+        <button onclick="registerUser()">Register</button>
+        <div class="success" id="registerSuccess">✅ Registration Successful!</div>
+      </div>
+
+      <div id="loginForm" style="display:none;">
+        <h2>Login to BCC CLASSES</h2>
+        <input type="text" id="loginName" placeholder="Enter Full Name" />
+        <input type="email" id="loginEmail" placeholder="Enter Email" />
+        <input type="password" id="loginPassword" placeholder="Enter Password" />
+        <button onclick="loginUser()">Login</button>
+        <div class="success" id="loginSuccess">✅ Login Successful!</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Created by Rishiraj Mandal</footer>
+
+  <script>
+    emailjs.init("wwastlMwUKYNsbUFm");
+    let generatedOTP = "";
+
+    function showSection(id) {
+      const sections = document.querySelectorAll("section");
+      sections.forEach(sec => sec.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+    }
+
+    function toggleTab(tab) {
+      document.getElementById("registerForm").style.display = (tab === "registerForm") ? "block" : "none";
+      document.getElementById("loginForm").style.display = (tab === "loginForm") ? "block" : "none";
+    }
+
+    function sendOTP() {
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const name = document.getElementById("regName").value.trim();
+      const studentClass = document.getElementById("regClass").value;
+
+      if (!email || !name || !studentClass) {
+        alert("Please fill all details before requesting OTP.");
+        return;
+      }
+
+      generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+
+      const templateParams = {
+        to_email: email,
+        otp: generatedOTP
+      };
+
+      emailjs.send("service_jlrzy4k", "template_wp3e41u", templateParams)
+        .then(() => alert("OTP Sent to your Email!"))
+        .catch(err => alert("Error sending OTP: " + JSON.stringify(err)));
+
+      document.getElementById("otp").disabled = false;
+    }
+
+    function registerUser() {
+      const otpInput = document.getElementById("otp").value.trim();
+      const name = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const password = document.getElementById("regPassword").value;
+      const studentClass = document.getElementById("regClass").value;
+
+      if (otpInput === generatedOTP) {
+        localStorage.setItem("studentName", name);
+        localStorage.setItem("studentEmail", email);
+        localStorage.setItem("studentPassword", password);
+        localStorage.setItem("studentClass", studentClass);
+
+        document.getElementById("registerSuccess").style.display = "block";
+        document.getElementById("studentInfo").innerText = `👤 ${name} (Class ${studentClass})`;
+        setHomeBackground(true);
+        setTimeout(() => showSection('home'), 2000);
+      } else {
+        alert("❌ Invalid OTP. Please try again.");
+      }
+    }
+
+    function loginUser() {
+      const name = document.getElementById("loginName").value.trim();
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const password = document.getElementById("loginPassword").value;
+
+      const storedName = localStorage.getItem("studentName");
+      const storedEmail = localStorage.getItem("studentEmail");
+      const storedPassword = localStorage.getItem("studentPassword");
+      const storedClass = localStorage.getItem("studentClass");
+
+      if (
+        name === storedName &&
+        email === storedEmail &&
+        password === storedPassword
+      ) {
+        document.getElementById("loginSuccess").style.display = "block";
+        document.getElementById("studentInfo").innerText = `👤 ${name} (Class ${storedClass})`;
+        setHomeBackground(true);
+        setTimeout(() => showSection('home'), 2000);
+      } else {
+        alert("❌ Invalid login details!");
+      }
+    }
+
+    function logoutUser() {
+      localStorage.clear();
+      document.getElementById("studentInfo").innerText = "";
+      setHomeBackground(false);
+      alert("🚪 Logged out successfully.");
+      showSection('home');
+    }
+
+    function setHomeBackground(status) {
+      const homeSec = document.getElementById("home");
+      if (status) {
+        homeSec.classList.add("bg");
+      } else {
+        homeSec.classList.remove("bg");
+      }
+    }
+
+    window.onload = function () {
+      const name = localStorage.getItem("studentName");
+      const studentClass = localStorage.getItem("studentClass");
+      if (name && studentClass) {
+        document.getElementById("studentInfo").innerText = `👤 ${name} (Class ${studentClass})`;
+        setHomeBackground(true);
+      }
+    };
+  </script>
+</body>
+</html>
